@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -14,6 +14,9 @@ import "./interfaces/IRandomNumberConsumer.sol";
 
 contract UnifiedLiquidityPool is ERC20, Ownable, ReentrancyGuard {
     using Address for address;
+
+    /// @notice Event emitted when batch is ready
+    event BatchReady(uint256 batchID);
 
     /// @notice Event emitted only on construction.
     event UnifiedLiquidityPoolDeployed();
@@ -62,6 +65,12 @@ contract UnifiedLiquidityPool is ERC20, Ownable, ReentrancyGuard {
         uint256 shares;
         uint256 profits;
     }
+
+    /// @notice randomFailSafe is used to ensure the VRF is active. 
+    uint256 public randomFailSafe;
+    
+    /// @notice activeRequest is used to track and retrieve random from the vrf
+    bytes32 public activeRequest;
 
     /// @notice Approved Game List
     mapping(address => bool) public approvedGames;
@@ -421,13 +430,20 @@ contract UnifiedLiquidityPool is ERC20, Ownable, ReentrancyGuard {
      * @dev Public function for getting vrf number and reqeust randomness. This function can be called by only apporved games.
      */
     function getRandomNumber() public onlyApprovedGame returns (uint256) {
-        uint256 rand = RNG.getVerifiedRandomNumber();
+        uint256 rand = RNG.getVerifiedRandomNumber(activeRequest);
         if (currentRandom != rand || (currentRandom == 0 && rand == 0)) {
             distribute();
             randomNumbers[currentRandom] = rand;
+            emit BatchReady(currentRandom);
             currentRandom = rand;
-            RNG.requestRandomNumber(2021);
+            activeRequest = RNG.requestRandomNumber(2021);
+            randomFailSafe = block.timestamp + 20;
         }
+        if (randomFailSafe <= block.timestamp) {
+            activeRequest = RNG.requestRandomNumber(2021);
+            randomFailSafe = block.timestamp + 20;
+        }
+
         return currentRandom;
     }
 

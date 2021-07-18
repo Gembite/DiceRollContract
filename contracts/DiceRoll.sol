@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -39,7 +39,12 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     event DiceRollDeployed();
 
     /// @notice Event emitted when player start the betting.
-    event BetStarted(address indexed player, uint256 number, uint256 amount);
+    event BetStarted(
+        address indexed player,
+        uint256 number,
+        uint256 amount,
+        uint256 batchID
+    );
 
     /// @notice Event emitted when player finish the betting.
     event BetFinished(address indexed player, bool won);
@@ -105,7 +110,12 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         betInfos[msg.sender].gameRandomNumber = ULP.getRandomNumber();
         betGBTS += _amount;
 
-        emit BetStarted(msg.sender, _number, _amount);
+        emit BetStarted(
+            msg.sender,
+            _number,
+            _amount,
+            betInfos[msg.sender].gameRandomNumber
+        );
     }
 
     /**

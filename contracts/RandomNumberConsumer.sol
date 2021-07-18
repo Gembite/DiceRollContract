@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
 import "@chainlink/contracts/src/v0.8/dev/VRFConsumerBase.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -17,6 +17,9 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
 
     uint256 private randomNumber;
     address private ULPAddress;
+
+    bytes32 currentRequestID;
+    mapping(bytes32 => uint256) requestToRandom;
 
     /// @notice Event emitted when chainlink verified random number arrived.
     event randomNumberArrived(bool arrived, uint256 number);
@@ -57,30 +60,41 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
     function requestRandomNumber(uint256 _userProvidedSeed)
         public
         onlyULP
-        returns (bytes32)
+        returns (bytes32 requestID)
     {
         require(
             LINK.balanceOf(address(this)) >= fee,
             "Not enough LINK - fill contract with faucet"
         );
         emit randomNumberArrived(false, randomNumber);
-        return requestRandomness(keyHash, fee, _userProvidedSeed);
+        uint256 rand = requestToRandom[currentRequestID];
+        currentRequestID = requestRandomness(keyHash, fee, _userProvidedSeed);
+        requestToRandom[currentRequestID] = rand;
+        return currentRequestID;
     }
 
     /**
      * @dev Callback function used by VRF Coordinator. This function sets new random number with unique request Id.
      * @param _randomness Random Number
      */
-    function fulfillRandomness(bytes32, uint256 _randomness) internal override {
-        randomNumber = _randomness;
+    function fulfillRandomness(bytes32 requestID, uint256 _randomness)
+        internal
+        override
+    {
+        requestToRandom[requestID] = _randomness;
         emit randomNumberArrived(true, randomNumber);
     }
 
     /**
      * @dev Public function for returning verified random number. This function can be called by only ULP.
      */
-    function getVerifiedRandomNumber() public view onlyULP returns (uint256) {
-        return randomNumber;
+    function getVerifiedRandomNumber(bytes32 activeID)
+        public
+        view
+        onlyULP
+        returns (uint256)
+    {
+        return requestToRandom[activeID];
     }
 
     /**
