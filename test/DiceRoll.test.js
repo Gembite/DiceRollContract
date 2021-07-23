@@ -4,6 +4,7 @@ const DiceRoll = artifacts.require("DiceRoll");
 const RNG = artifacts.require("RandomNumberConsumer");
 const { assert } = require("chai");
 const { BN } = require("web3-utils");
+const timeMachine = require('ganache-time-traveler');
 
 contract("DiceRoll", (accounts) => {
     let gbts_contract, ulp_contract, diceRoll_contract, rng_contract;
@@ -53,7 +54,16 @@ contract("DiceRoll", (accounts) => {
         await gbts_contract.transfer(accounts[1], new BN('1000000000000000000000'), { from: accounts[0] }); // Win Account 1000GBTS
         await gbts_contract.transfer(accounts[2], new BN('1000000000000000000000'), { from: accounts[0] }); // Lose Account 1000GBTS
 
-        await ulp_contract.changeGameApproval(diceRoll_contract.address, true, { from: accounts[0] });
+        await ulp_contract.unlockGameForApproval(
+            diceRoll_contract.address,
+            { from: accounts[0] }
+        );
+        await timeMachine.advanceTimeAndBlock(86400);
+        await ulp_contract.changeGameApproval(
+            diceRoll_contract.address,
+            true,
+            { from: accounts[0] }
+        );
         await rng_contract.setULPAddress(ulp_contract.address);
     });
 

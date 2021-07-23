@@ -53,6 +53,11 @@ interface IUnifiedLiquidityPool {
     function getNewRandomNumber(uint256 _oldRandom) external returns (uint256);
 
     /**
+     * @dev Public function for returning verified random number. This function can be called by only approved games.
+     */
+    function getVerifiedRandomNumber() external view returns (uint256);
+
+    /**
      * @dev External function to return the current NFT distribution address
      */
     function currentNFT() external view returns (address);
