@@ -68,27 +68,7 @@ contract("DiceRoll", (accounts) => {
     });
 
     describe("Bet", () => {
-        it("Betting is not working with locked", async () => {
-            await diceRoll_contract.lock({ from: accounts[0] });
-            let thrownError;
-            try {
-                await diceRoll_contract.bet(
-                    40,
-                    new BN('10000000000000000000000'), // 10000GBTS
-                    { from: accounts[1] }
-                );
-            } catch (error) {
-                thrownError = error;
-            }
-
-            assert.include(
-                thrownError.message,
-                'DiceRoll: Game is locked',
-            )
-        });
-
         it("Betting is not working with insuffcient balance", async () => {
-            await diceRoll_contract.unLock({ from: accounts[0] });
             let thrownError;
             try {
                 await diceRoll_contract.bet(
@@ -157,22 +137,6 @@ contract("DiceRoll", (accounts) => {
     });
 
     describe("Play", () => {
-        it("Play is not working with locked", async () => {
-
-            await diceRoll_contract.lock({ from: accounts[0] });
-            let thrownError;
-
-            try {
-                await diceRoll_contract.play({ from: accounts[1] });
-            } catch (error) {
-                thrownError = error;
-            }
-
-            assert.include(
-                thrownError.message,
-                'DiceRoll: Game is locked',
-            )
-        });
 
         it("Play is not working without betting", async () => {
             await diceRoll_contract.unLock({ from: accounts[0] });
