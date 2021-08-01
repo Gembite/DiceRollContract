@@ -31,7 +31,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         uint256 number;
         uint256 amount;
         uint256 multiplier;
-        uint256 gameRandomNumber;
+        byte32 gameRandomNumber;
     }
 
     mapping(address => BetInfo) private betInfos;
@@ -44,7 +44,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         address indexed player,
         uint256 number,
         uint256 amount,
-        uint256 batchID
+        byte32 batchID
     );
 
     /// @notice Event emitted when player finish the betting.
