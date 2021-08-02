@@ -31,7 +31,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         uint256 number;
         uint256 amount;
         uint256 multiplier;
-        byte32 gameRandomNumber;
+        bytes32 requestId;
     }
 
     mapping(address => BetInfo) private betInfos;
@@ -44,7 +44,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         address indexed player,
         uint256 number,
         uint256 amount,
-        byte32 batchID
+        bytes32 batchID
     );
 
     /// @notice Event emitted when player finish the betting.
@@ -75,7 +75,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev External function for start betting. This function can be called by players.
+     * @dev External function to start betting. This function can be called by players.
      * @param _number Number of player set
      * @param _amount Amount of player betted.
      */
@@ -100,19 +100,19 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         betInfos[msg.sender].number = _number;
         betInfos[msg.sender].amount = _amount;
         betInfos[msg.sender].multiplier = multiplier;
-        betInfos[msg.sender].gameRandomNumber = ULP.getRandomNumber();
+        betInfos[msg.sender].requestId = ULP.requestRandomNumber();
         betGBTS += _amount;
 
         emit BetStarted(
             msg.sender,
             _number,
             _amount,
-            betInfos[msg.sender].gameRandomNumber
+            betInfos[msg.sender].requestId
         );
     }
 
     /**
-     * @dev External function for calculate betting win or lose.
+     * @dev External function to calculate betting win or lose.
      */
     function play() external nonReentrant {
         require(
@@ -120,8 +120,8 @@ contract DiceRoll is Ownable, ReentrancyGuard {
             "DiceRoll: Cannot play without betting"
         );
 
-        uint256 newRandomNumber = ULP.getNewRandomNumber(
-            betInfos[msg.sender].gameRandomNumber
+        uint256 newRandomNumber = ULP.getVerifiedRandomNumber(
+            betInfos[msg.sender].requestId
         );
 
         uint256 gameNumber = uint256(
@@ -150,7 +150,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Public function for returns min bet amount with current Link and GBTS token price.
+     * @dev Public function to return min bet amount with current Link and GBTS token price.
      */
     function minBetAmount() public view returns (uint256) {
         int256 GBTSPrice;
