@@ -20,7 +20,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     IAggregator public GBTSUSDT;
 
     uint256 constant RTP = 98;
-    uint256 constant gameId = 1;
+    uint256 constant gameId = 2;
 
     uint256 public betGBTS;
     uint256 public paidGBTS;
@@ -120,15 +120,15 @@ contract DiceRoll is Ownable, ReentrancyGuard {
             "DiceRoll: Cannot play without betting"
         );
 
-        uint256 newRandomNumber = ULP.getVerifiedRandomNumber(
+        uint256 randomNumber = ULP.getVerifiedRandomNumber(
             betInfos[msg.sender].requestId
         );
 
         uint256 gameNumber = uint256(
-            keccak256(abi.encode(newRandomNumber, address(msg.sender), gameId))
+            keccak256(abi.encode(randomNumber, address(msg.sender), gameId))
         ) % 100;
 
-        emit VerifiedGameNumber(newRandomNumber, gameNumber, gameId);
+        emit VerifiedGameNumber(randomNumber, gameNumber, gameId);
 
         BetInfo storage betInfo = betInfos[msg.sender];
 
