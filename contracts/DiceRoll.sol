@@ -26,7 +26,6 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     uint256 public betGBTS;
     uint256 public paidGBTS;
 
-    uint256 public minBetAmount;
     uint256 public vrfCost = 10000; // 0.0001 Link
 
     struct BetInfo {
