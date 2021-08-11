@@ -16,6 +16,26 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
     using Address for address;
 
+    /// @notice Event emitted only on construction.
+    event DiceRollDeployed();
+
+    /// @notice Event emitted when player start the betting.
+    event BetStarted(
+        address indexed player,
+        uint256 number,
+        uint256 amount,
+        bytes32 batchID
+    );
+
+    /// @notice Event emitted when player finish the betting.
+    event BetFinished(address indexed player, bool won);
+
+    /// @notice Event emitted when game number generated.
+    event VerifiedGameNumber(uint256 vrf, uint256 gameNumber, uint256 gameId);
+
+    /// @notice Event emitted when gembites proxy set.
+    event GembitesProxySet(address newProxyAddress);
+    
     IUnifiedLiquidityPool public ULP;
     IERC20 public GBTS;
     IGembitesProxy public GembitesProxy;
@@ -36,26 +56,6 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     }
 
     mapping(address => BetInfo) private betInfos;
-
-    /// @notice Event emitted only on construction.
-    event DiceRollDeployed();
-
-    /// @notice Event emitted when player start the betting.
-    event BetStarted(
-        address indexed player,
-        uint256 number,
-        uint256 amount,
-        bytes32 batchID
-    );
-
-    /// @notice Event emitted when player finish the betting.
-    event BetFinished(address indexed player, bool won);
-
-    /// @notice Event emitted when game number generated.
-    event VerifiedGameNumber(uint256 vrf, uint256 gameNumber, uint256 gameId);
-
-    /// @notice Event emitted when gembites proxy set.
-    event GembitesProxySet(address newProxyAddress);
 
     /**
      * @dev Constructor function
