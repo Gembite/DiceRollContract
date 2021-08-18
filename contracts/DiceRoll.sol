@@ -41,7 +41,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     IGembitesProxy public GembitesProxy;
 
     uint256 constant RTP = 98;
-    uint256 constant gameId = 2;
+    uint256 public gameId;
 
     uint256 public betGBTS;
     uint256 public paidGBTS;
@@ -62,16 +62,19 @@ contract DiceRoll is Ownable, ReentrancyGuard {
      * @param _ULP Interface of ULP
      * @param _GBTS Interface of GBTS
      * @param _GembitesProxy Interface of GembitesProxy
+     * @param _gameId Id of Game
      */
     constructor(
         IUnifiedLiquidityPool _ULP,
         IERC20 _GBTS,
-        IGembitesProxy _GembitesProxy
+        IGembitesProxy _GembitesProxy,
+        uint256 _gameId
     ) {
         ULP = _ULP;
         GBTS = _GBTS;
         GembitesProxy = _GembitesProxy;
-
+        gameId = _gameId;
+        
         emit DiceRollDeployed();
     }
 
