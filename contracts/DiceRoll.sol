@@ -132,8 +132,8 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         requestToBet[requestId] = BetInfo(
             msg.sender,
             _number,
-            multiplier,
             _amount,
+            multiplier,
             expectedWin,
             _rollOver,
             requestId
