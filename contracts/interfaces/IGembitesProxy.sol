@@ -4,7 +4,6 @@ pragma solidity ^0.8.6;
 /**
  * @title GembitesProxy interface
  */
-
 interface IGembitesProxy {
     /**
      * @dev External function to return min bet amount.
