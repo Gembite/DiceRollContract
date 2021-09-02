@@ -68,11 +68,13 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         IUnifiedLiquidityPool _ULP,
         IERC20 _GBTS,
         IRandomNumberGenerator _RNG,
+        IGembitesProxy _GembitesProxy,
         uint256 _gameId
     ) {
         ULP = _ULP;
         GBTS = _GBTS;
         RNG = _RNG;
+        GembitesProxy = _GembitesProxy;
         gameId = _gameId;
 
         emit DiceRollDeployed();

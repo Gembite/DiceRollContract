@@ -1,16 +1,14 @@
 const UnifiedLiquidityPool = artifacts.require("UnifiedLiquidityPool");
-const RandomNumberConsumer = artifacts.require("RandomNumberConsumer");
 const GBTS = artifacts.require("GBTS");
 
 module.exports = async function (deployer) {
 
     GBTS_instance = await GBTS.deployed();
-    RNG_instance = await RandomNumberConsumer.deployed();
 
     await deployer.deploy(
         UnifiedLiquidityPool,
         GBTS_instance.address, // Deployed GBTS Address
-        RNG_instance.address, // Deployed RNG Address
+        "0x7813391Ca670be5F1324CD5BE3ff6bfAE2B42E01", // Deployed RNG Address
     );
 
     return;
