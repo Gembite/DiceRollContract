@@ -16,7 +16,6 @@ module.exports = async function (deployer) {
         ULP_instance.address, // Deployed ULP Address
         GBTS_instance.address, // Deployed GBTS Address
         RNG_instance.address, // // Deployed RNG Address
-        Proxy_instance.address, // Deployed GembitesProxy Address
         2, // Game Id
     );
 
