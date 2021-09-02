@@ -32,6 +32,9 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         bool rollOver
     );
 
+    /// @notice Event emitted when game number is set.
+    event gameNumberArrived(uint256 gameNumber, bytes32 requestId, uint256 chainlinkNumber);
+
     /// @notice Event emitted when bet is finished.
     event Betfinished(address player, uint256 paidAmount, bool betResult);
 
@@ -158,6 +161,8 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         uint256 gameNumber = (uint256(
             keccak256(abi.encode(_randomness, player, gameId))
         ) % 100) + 1;
+
+        emit gameNumberArrived(gameNumber, _requestId, _randomness);
 
         if (
             (betInfo.rollOver && betInfo.number >= gameNumber) ||
