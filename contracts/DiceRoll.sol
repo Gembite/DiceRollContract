@@ -33,11 +33,11 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     );
 
     /// @notice Event emitted when bet is finished.
-    event Betfinished(
+    event BetFinished(
         address player,
         uint256 paidAmount,
         bool betResult,
-        uint256 gameNumber
+        BetInfo betInfo
     );
 
     IUnifiedLiquidityPool public ULP;
@@ -55,9 +55,10 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         uint256 number;
         uint256 amount;
         uint256 multiplier;
-        uint256 expectedWin;
+        uint256 expectedWinAmount;
         bool rollOver; // true: win when user's number is greater than chainlink random number, false: win when user's number is less than random number.
         bytes32 requestId;
+        uint256 gameNumber;
     }
 
     mapping(bytes32 => BetInfo) public requestToBet;
@@ -103,7 +104,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         bool _rollOver
     ) external nonReentrant {
         uint256 winChance;
-        uint256 expectedWin;
+        uint256 expectedWinAmount;
         uint256 multiplier;
         uint256 minBetAmount;
         uint256 maxWinAmount;
@@ -123,10 +124,10 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         }
 
         multiplier = (98 * 1000) / winChance;
-        expectedWin = (multiplier * _amount) / 1000;
+        expectedWinAmount = (multiplier * _amount) / 1000;
 
         require(
-            _amount >= minBetAmount && expectedWin <= maxWinAmount,
+            _amount >= minBetAmount && expectedWinAmount <= maxWinAmount,
             "DiceRoll: Expected paid amount is out of range"
         );
 
@@ -139,9 +140,10 @@ contract DiceRoll is Ownable, ReentrancyGuard {
             _number,
             _amount,
             multiplier,
-            expectedWin,
+            expectedWinAmount,
             _rollOver,
-            requestId
+            requestId,
+            0
         );
 
         betGBTS += _amount;
@@ -155,24 +157,26 @@ contract DiceRoll is Ownable, ReentrancyGuard {
      * @param _randomness Random Number
      */
     function play(bytes32 _requestId, uint256 _randomness) external onlyRNG {
-        BetInfo memory betInfo = requestToBet[_requestId];
+        BetInfo storage betInfo = requestToBet[_requestId];
 
         address player = betInfo.player;
-        uint256 expectedWin = betInfo.expectedWin;
+        uint256 expectedWinAmount = betInfo.expectedWinAmount;
 
         uint256 gameNumber = (uint256(
             keccak256(abi.encode(_randomness, player, gameId))
         ) % 100) + 1;
 
+        betInfo.gameNumber = gameNumber;
+
         if (
             (betInfo.rollOver && betInfo.number >= gameNumber) ||
             (!betInfo.rollOver && betInfo.number <= gameNumber)
         ) {
-            ULP.sendPrize(player, expectedWin);
-            paidGBTS += expectedWin;
-            emit Betfinished(player, expectedWin, true, gameNumber);
+            ULP.sendPrize(player, expectedWinAmount);
+            paidGBTS += expectedWinAmount;
+            emit BetFinished(player, expectedWinAmount, true, betInfo);
         } else {
-            emit Betfinished(player, 0, false, gameNumber);
+            emit BetFinished(player, 0, false, betInfo);
         }
     }
 
