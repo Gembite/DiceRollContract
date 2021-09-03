@@ -63,6 +63,14 @@ contract DiceRoll is Ownable, ReentrancyGuard {
 
     mapping(bytes32 => BetInfo) public requestToBet;
 
+    modifier onlyRNG() {
+        require(
+            msg.sender == address(RNG),
+            "DiceRoll: Caller is not the RandomNumberGenerator"
+        );
+        _;
+    }
+    
     /**
      * @dev Constructor function
      * @param _ULP Interface of ULP
@@ -82,14 +90,6 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         gameId = _gameId;
 
         emit DiceRollDeployed();
-    }
-
-    modifier onlyRNG() {
-        require(
-            msg.sender == address(RNG),
-            "DiceRoll: Caller is not the RandomNumberGenerator"
-        );
-        _;
     }
 
     /**
