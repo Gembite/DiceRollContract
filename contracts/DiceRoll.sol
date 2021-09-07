@@ -117,7 +117,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
             "DiceRoll: Bet amount is out of range"
         );
 
-        if (_rollOver) {
+        if (!_rollOver) {
             winChance = _number;
         } else {
             winChance = 100 - _number;
@@ -162,15 +162,11 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         address player = betInfo.player;
         uint256 expectedWinAmount = betInfo.expectedWinAmount;
 
-        uint256 gameNumber = (uint256(
-            keccak256(abi.encode(_randomness, player, gameId))
-        ) % 100) + 1;
-
-        betInfo.gameNumber = gameNumber;
+        betInfo.gameNumber = _randomness;
 
         if (
-            (betInfo.rollOver && betInfo.number >= gameNumber) ||
-            (!betInfo.rollOver && betInfo.number <= gameNumber)
+            (!betInfo.rollOver && betInfo.number >= _randomness) ||
+            (betInfo.rollOver && betInfo.number <= _randomness)
         ) {
             ULP.sendPrize(player, expectedWinAmount);
             paidGBTS += expectedWinAmount;
