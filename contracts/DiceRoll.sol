@@ -160,8 +160,8 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         betInfo.gameNumber = (_randomness % 100) + 1;
 
         if (
-            (!betInfo.rollOver && betInfo.number >= _randomness) ||
-            (betInfo.rollOver && betInfo.number <= _randomness)
+            (!betInfo.rollOver && betInfo.number >= betInfo.gameNumber) ||
+            (betInfo.rollOver && betInfo.number <= betInfo.gameNumber)
         ) {
             ULP.sendPrize(player, expectedWinAmount);
             paidGBTS += expectedWinAmount;
