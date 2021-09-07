@@ -48,8 +48,6 @@ contract DiceRoll is Ownable, ReentrancyGuard {
     uint256 public betGBTS;
     uint256 public paidGBTS;
 
-    uint256 public gameId;
-
     struct BetInfo {
         address player;
         uint256 number;
@@ -76,18 +74,15 @@ contract DiceRoll is Ownable, ReentrancyGuard {
      * @param _ULP Interface of ULP
      * @param _GBTS Interface of GBTS
      * @param _RNG Interface of RandomNumberGenerator
-     * @param _gameId Game Id
      */
     constructor(
         IUnifiedLiquidityPool _ULP,
         IERC20 _GBTS,
-        IRandomNumberGenerator _RNG,
-        uint256 _gameId
+        IRandomNumberGenerator _RNG
     ) {
         ULP = _ULP;
         GBTS = _GBTS;
         RNG = _RNG;
-        gameId = _gameId;
 
         emit DiceRollDeployed();
     }
