@@ -68,7 +68,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         );
         _;
     }
-    
+
     /**
      * @dev Constructor function
      * @param _ULP Interface of ULP
@@ -157,7 +157,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         address player = betInfo.player;
         uint256 expectedWinAmount = betInfo.expectedWinAmount;
 
-        betInfo.gameNumber = _randomness;
+        betInfo.gameNumber = (_randomness % 100) + 1;
 
         if (
             (!betInfo.rollOver && betInfo.number >= _randomness) ||
