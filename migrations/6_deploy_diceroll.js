@@ -13,8 +13,8 @@ module.exports = async function (deployer) {
 
     await deployer.deploy(
         DiceRoll,
-        "0xB1310c700699eC24D67beAc7164cea0792069080", // Deployed ULP Address
-        "0xC238001552195f0E159798CdA94DC22a71993bC9", // Deployed GBTS Address
+        ULP_instance.address, // Deployed ULP Address
+        GBTS_instance.address, // Deployed GBTS Address
         RNG_instance.address, // // Deployed RNG Address
         2, // Game Id
     );
