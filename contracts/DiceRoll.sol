@@ -115,7 +115,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         if (!_rollOver) {
             winChance = _number;
         } else {
-            winChance = 100 - _number;
+            winChance = 100 - _number + 1;
         }
 
         multiplier = (98 * 1000) / winChance;
