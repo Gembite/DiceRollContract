@@ -108,7 +108,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         maxWinAmount = GBTS.balanceOf(address(ULP)) / 100;
 
         require(
-            _number > 0 && _number < 100,
+            _number > 1 && _number < 99,
             "DiceRoll: Bet amount is out of range"
         );
 
