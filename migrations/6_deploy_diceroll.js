@@ -1,11 +1,18 @@
 const DiceRoll = artifacts.require('DiceRoll');
+const UnifiedLiquidityPool = artifacts.require("UnifiedLiquidityPool");
+const GBTS = artifacts.require("GBTS");
+const RandomNumberGenerator = artifacts.require("RandomNumberGenerator");
 
 module.exports = async function (deployer) {
 
+    GBTS_instance = await GBTS.deployed();
+    ULP_instance = await UnifiedLiquidityPool.deployed();
+    RNG_instance = await RandomNumberGenerator.deployed();
+
     await deployer.deploy(
         DiceRoll,
-        "0xbD658acCb3364b292E2f7620F941d4662Fd25749", // Deployed ULP Address
-        "0xbe9512e2754cb938dd69bbb96c8a09cb28a02d6d", // Deployed GBTS Address
+        ULP_instance.address, // Deployed ULP Address
+        GBTS_instance.address, // Deployed GBTS Address
         RNG_instance.address, // // Deployed RNG Address
     );
 

@@ -1,18 +1,18 @@
 const RandomNumberGenerator = artifacts.require("RandomNumberGenerator");
-// const UnifiedLiquidityPool = artifacts.require("UnifiedLiquidityPool");
+const UnifiedLiquidityPool = artifacts.require("UnifiedLiquidityPool");
 const { BN } = require("web3-utils");
 
 module.exports = async function (deployer) {
 
-  //  ULP_instance = await UnifiedLiquidityPool.deployed();
+    ULP_instance = await UnifiedLiquidityPool.deployed();
 
     await deployer.deploy(
         RandomNumberGenerator,
-        '0x3d2341ADb2D31f1c5530cDC622016af293177AE0', // Chainlink VRF Coordinator address
-        '0xb0897686c545045aFc77CF20eC7A532E3120E0F1', // LINK token address
-        '0xf86195cf7690c55907b2b611ebb7343a6f649bff128701cc542f0569e2c549da', // Key Hash
+        '0x8C7382F9D8f56b33781fE506E897a4F1e2d17255', // Chainlink VRF Coordinator address
+        '0x326C977E6efc84E512bB9C30f76E30c160eD06FB', // LINK token address
+        '0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4', // Key Hash
         new BN('100000000000000'), // Fee
-        "0xbD658acCb3364b292E2f7620F941d4662Fd25749"
+        ULP_instance.address
     );
 
     return;
