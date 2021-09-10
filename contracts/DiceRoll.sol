@@ -108,17 +108,19 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         maxWinAmount = GBTS.balanceOf(address(ULP)) / 100;
 
         require(
-            _number > 1 && _number < 99,
+            _number > 0 && _number < 101,
             "DiceRoll: Bet amount is out of range"
         );
 
         if (!_rollOver) {
             winChance = _number;
         } else {
-            winChance = 100 - _number + 1;
+            winChance = 101 - _number;
         }
 
-        multiplier = (98 * 1000) / winChance;
+        require(winChance < 98, "DiceRoll: Bet number is out of bounds");
+
+        multiplier = 98000 / winChance;
         expectedWinAmount = (multiplier * _amount) / 1000;
 
         require(
