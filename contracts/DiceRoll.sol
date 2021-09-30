@@ -145,7 +145,7 @@ contract DiceRoll is Ownable, ReentrancyGuard {
 
         betGBTS += _amount;
 
-        emit BetStarted(msg.sender, multiplier, _number, _amount, _rollOver);
+        emit BetStarted(msg.sender, multiplier, _number, _amount, _rollOver, requestId);
     }
 
     /**
