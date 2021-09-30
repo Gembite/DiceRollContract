@@ -29,7 +29,8 @@ contract DiceRoll is Ownable, ReentrancyGuard {
         uint256 multiplier,
         uint256 number,
         uint256 amount,
-        bool rollOver
+        bool rollOver,
+        bytes32 requestId
     );
 
     /// @notice Event emitted when bet is finished.
